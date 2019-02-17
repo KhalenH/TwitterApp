@@ -34,6 +34,8 @@ class HomeTableTableViewController: UITableViewController {
     
     @objc func loadTweets(){
         
+        numberOfTweet = 20
+        
        let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         
        let myParams = ["count": numberOfTweet]
@@ -82,7 +84,7 @@ class HomeTableTableViewController: UITableViewController {
     @IBAction func onLogout(_ sender: Any) {
         TwitterAPICaller.client?.logout()
         self.dismiss(animated: true, completion: nil)
-        UserDefaults.standard.set(false, forKey: "userLoggedIn")
+        UserDefaults.standard.set(false, forKey: "userLoggedin")
     }
     // MARK: - Table view data source
     
