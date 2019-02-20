@@ -16,12 +16,18 @@ class HomeTableTableViewController: UITableViewController {
     
     let myRefreshControl = UIRefreshControl()
     
+    let tweetTable = UITableView()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadTweets()
+        
 
         myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
         tableView.refreshControl = myRefreshControl
+        self.tweetTable.refreshControl = myRefreshControl
+        self.tweetTable.rowHeight = UITableView.automaticDimension
+        self.tweetTable.estimatedRowHeight = 150
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -31,6 +37,11 @@ class HomeTableTableViewController: UITableViewController {
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.loadTweets()
+    }
+    
     
     @objc func loadTweets(){
         
@@ -38,7 +49,7 @@ class HomeTableTableViewController: UITableViewController {
         
        let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         
-       let myParams = ["count": numberOfTweet]
+        let myParams: [String:Any] = ["count": numberOfTweet]
        TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams, success: { (tweets: [NSDictionary]) in
             
             self.tweetArray.removeAll()
@@ -59,7 +70,7 @@ class HomeTableTableViewController: UITableViewController {
         let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         numberOfTweet = numberOfTweet + 20
         
-        let myParams = ["count": numberOfTweet]
+        let myParams: [String:Any] = ["count": numberOfTweet]
         TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams, success: { (tweets: [NSDictionary]) in
             
             self.tweetArray.removeAll()
@@ -104,19 +115,18 @@ class HomeTableTableViewController: UITableViewController {
             cell.profileImageView.image = UIImage(data: imageData)
         }
         
+        cell.setFavorite(tweetArray[indexPath.row]["favorited"] as! Bool)
+        cell.tweetId = tweetArray[indexPath.row]["id"] as! Int
+        cell.setRetweeted(tweetArray[indexPath.row]["retweeted"] as! Bool)
         return cell
     }
-    
-    
-    
-    
     
     
     
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return 100
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
